@@ -1,0 +1,26 @@
+{
+    "name": "coreproc/laravel-docker-internal-install-command",
+    "description": "Provides your Laravel app with baseline Docker files for use in CoreProc internal environment",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Coreproc\\DockerInternalInstallCommand\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chris Bautista",
+            "email": "chris.bautista@coreproc.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Coreproc\\DockerInternalInstallCommand\\DockerInternalInstallProvider"
+            ]
+        }
+    }
+}
