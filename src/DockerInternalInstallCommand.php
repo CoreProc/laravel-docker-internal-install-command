@@ -13,7 +13,7 @@ class DockerInternalInstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'docker-install {--e|environment=internal}';
+    protected $signature = 'docker:install {--e|environment=internal}';
 
     /**
      * The console command description.
