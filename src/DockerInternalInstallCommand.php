@@ -28,9 +28,11 @@ class DockerInternalInstallCommand extends Command
     public function handle(): void
     {
         $phpVersion = $this->choice('Choose a PHP version:', ['8.1', '8.2'], 1);
+
         $nodeVersion = $this->choice('Choose a Node.js version:', ['16', '18', '20'], 1);
 
         $containerName = strtolower($this->ask('Define container name:'));
+
         $containerPort = $this->ask('Define port:');
 
         $environment = strtolower($this->option('environment'));
@@ -43,7 +45,7 @@ class DockerInternalInstallCommand extends Command
             $nodeVersion
         ) {
             $dockerComposeDir = 'docker-compose-laravel-internal';
-            $pipe->command('git clone -b integration git@github.com:CoreProc/docker-compose-laravel-internal.git');
+            $pipe->command('git clone git@github.com:CoreProc/docker-compose-laravel-internal.git');
 
             // Move the cloned files to their locations
             $pipe->command('cp -R ' . $dockerComposeDir . '/docker-compose.internal.yml ./docker-compose.' . $environment . '.yml');
