@@ -31,15 +31,9 @@ class DockerInternalInstallCommand extends Command
 
         $nodeVersion = $this->choice('Choose a Node.js version:', ['16', '18', '20'], 1);
 
-        $containerName = strtolower($this->ask('Define container name:'));
-
-        $containerPort = $this->ask('Define port:');
-
         $environment = strtolower($this->option('environment'));
 
         Process::pipe(function (Pipe $pipe) use (
-            $containerName,
-            $containerPort,
             $environment,
             $phpVersion,
             $nodeVersion
@@ -48,27 +42,20 @@ class DockerInternalInstallCommand extends Command
             $pipe->command('git clone git@github.com:CoreProc/docker-compose-laravel-internal.git');
 
             // Move the cloned files to their locations
-            $pipe->command('cp -R ' . $dockerComposeDir . '/docker-compose.internal.yml ./docker-compose.' . $environment . '.yml');
             $pipe->command('cp -R ' . $dockerComposeDir . '/docker .');
             $pipe->command('cp -R ./docker/environment ./docker/' . $environment);
             $pipe->command('rm -rf ./docker/environment');
 
-            // Append Makefile contents to the current Makefile
-            $pipe->command('touch ./Makefile');
-            $pipe->command('cat ' . $dockerComposeDir . '/Makefile >> ./Makefile');
-            $pipe->command('sed -i "s/_REPLACE_ENVIRONMENT_/' . $environment . '/g" ./Makefile');
-
             // Delete the cloned directory
             $pipe->command('rm -rf ' . $dockerComposeDir);
 
-            // Replace docker-compose.yml contents
-            $pipe->command('sed -i "s/_REPLACE_CONTAINER_NAME_/' . $containerName . '/g" docker-compose.' . $environment . '.yml');
-            $pipe->command('sed -i "s/_REPLACE_ENVIRONMENT_/' . $environment . '/g" docker-compose.' . $environment . '.yml');
-            $pipe->command('sed -i "s/_REPLACE_APP_PORT_/' . $containerPort . '/g" docker-compose.' . $environment . '.yml');
-
             // Replace Dockerfile contents
-            $pipe->command('sed -i "s/_REPLACE_PHP_VERSION_/' . $phpVersion . '/g" ./docker/' . $environment . '/Dockerfile');
-            $pipe->command('sed -i "s/_REPLACE_NODE_VERSION_/' . $nodeVersion . '/g" ./docker/' . $environment . '/Dockerfile');
+            $pipe->command('sed -i "s/_REPLACE_PHP_VERSION_/' . $phpVersion . '/g" ./Dockerfile');
+            $pipe->command('sed -i "s/_REPLACE_NODE_VERSION_/' . $nodeVersion . '/g" ./Dockerfile');
+            $pipe->command('sed -i "s/_REPLACE_ENVIRONMENT_/' . $environment . '/g" ./Dockerfile');
+
+            // Rename Dockerfile
+            $pipe->command('mv ./Dockerfile ./Dockerfile.' . $environment);
         }, function (string $type, string $output) {
             $this->info($type);
             $this->info($output);
